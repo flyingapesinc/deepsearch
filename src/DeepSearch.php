@@ -67,11 +67,10 @@ class DeepSearch
 
 			}
 			
-			if (isset($searchModel['innerRelation'])) {
-				self::deepSearch($query, $splitSearch, $searchModel['innerRelation']);
-			} else {
-				return $query;
+			if (isset($searchModel['relations'])) {
+				self::deepSearch($query, $splitSearch, $searchModel['relations']);
 			}
 		}
+		return $query;
     }
 }

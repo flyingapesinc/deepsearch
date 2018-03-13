@@ -38,24 +38,24 @@ DeepSearch::find() will bring back your search results. It takes 3 arguments:
 
 ```php
 $searchModels = [
-    'searchFields' => ['title'], //fields where you want to search in the main model
-    'innerRelation' => [ //inner relationship, if any
-      [
-        'relationship' => 'comments', //here you put name of the relationship
-        'searchFields' => ['comment'], //and here the fields where you want to search in the related table
-        'innerRelation' => [
-            'relationship' => 'user',
-            'searchFields' => ['nombre'],
+    'searchFields' => ['title'], // Fields where you want to search in the main model
+    'relations' => [ // Relationships, if any
+        [
+            'relationship' => 'comments', // Here you put name of the relationship
+            'searchFields' => ['comment'], // And here the fields where you want to search in the related table
+        ],
+        [
+            'relationship' => 'comments.user', // Use dot notation for inner relations
+            'searchFields' => ['name'],
         ]
-      ]
     ]
 ];
 ```
 
-The find() method returns a query, so you need to bring the results by yourself using get() or paginate(n), following the example above we get:
+The find() method returns a query, so you need to bring the results by yourself using get() or paginate(n). Following the example above we get:
 
 ```php
-$search = DeepSearch::find($userInput,'App\Post',$searchModels)->get();
+$search = DeepSearch::find($userInput, 'App\Post', $searchModels)->get();
 ```
 
 ## Authors
