@@ -18,11 +18,15 @@ Require the package in your composer.json and update composer to download the pa
 
 After that, add the ServiceProvider to the providers array in config/app.php
 
-    FlyingApesInc\DeepSearch\ServiceProvider::class,
+```php
+FlyingApesInc\DeepSearch\ServiceProvider::class,
+```
 
 if you want to, add the facade for convenience
 
-    'DeepSearch' => FlyingApesInc\DeepSearch\Facade::class,
+```php
+'DeepSearch' => FlyingApesInc\DeepSearch\Facade::class,
+```
 
 ## How to Use
 
@@ -32,18 +36,29 @@ DeepSearch::find() will bring back your search results. It takes 3 arguments:
 * __$model__ the model from which you want to return the records. ex: 'App\Post'
 * __$searchModels__ an array with the relations of the main model you want to search in, as well as what fields. The format is as follows:
 
-	$searchModels = [
-		[
-			'searchFields' => ['title'], // first level, the main model, pass the search fields and his relations if any
-			'innerRelation' => [
-				[
-					'relationship' => 'comments', // inner levels, put the name of the relationship and repeat the process
-					'searchFields' => ['comment'],
-					'innerRelation' => [
-						'relationship' => 'user',
-						'searchFields' => ['nombre'],
-					]
-				]
-			]
-		]
-	];
+```php
+$searchModels = [
+    'searchFields' => ['title'], //fields where you want to search in the main model
+    'innerRelation' => [ //inner relationship, if any
+      [
+        'relationship' => 'comments', //here you put name of the relationship
+        'searchFields' => ['comment'], //and here the fields where you want to search in the related table
+        'innerRelation' => [
+            'relationship' => 'user',
+            'searchFields' => ['nombre'],
+        ]
+      ]
+    ]
+];
+```
+
+The find() method returns a query, so you need to bring the results by yourself using get() or paginate(n), following the example above we get:
+
+```php
+$search = DeepSearch::find($userInput,'App\Post',$searchModels)->get();
+```
+
+## Authors
+
+* __lHumanizado__
+* __Rubenazo__

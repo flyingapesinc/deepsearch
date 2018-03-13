@@ -18,11 +18,12 @@ class DeepSearch
     /**
      * Main process
      *
-     * @param string  $search
-     * @param \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string $search
+     * @param Illuminate\Database\Eloquent\Model $model
+     * @param array $searchModels
+     * @return Illuminate\Database\Eloquent\Builder
      */
-    public function find($search, $model, $searchModels)
+    public static function find($search, $model, $searchModels)
     {
 		// Remove special characters and split the search
 		$cleanSearch = preg_replace('/[^ \w]+/', ' ', $search);
@@ -30,18 +31,20 @@ class DeepSearch
   		$splitSearch = explode(' ', $cleanSearch);
 
 		if (count($splitSearch) == 0) {
-			return  new Collection(['result' => 'Empty Search']);
+			return $model::select('*');
 		}
+
+		$searchModels = [$searchModels];
 
 		$results = $model::where(function($query) use ($splitSearch, $searchModels) {
 			// Deep search every word in every field
-			$this->deepSearch($query, $splitSearch, $searchModels);
-		})->get();
+			self::deepSearch($query, $splitSearch, $searchModels);
+		});
 
 		return $results;
     }
 
-    private function deepSearch($query, $splitSearch, $currentLevel)
+    private static function deepSearch($query, $splitSearch, $currentLevel)
     {
     	foreach ($currentLevel as $searchModel) {
 			foreach ($searchModel['searchFields'] as $searchField) {
@@ -62,12 +65,12 @@ class DeepSearch
 					});
 				}
 
-				if (isset($searchModel['innerRelation'])) {
-					$this->deepSearch($query, $splitSearch, $searchModel['innerRelation']);
-				} else {
-					return $query;
-				}
-
+			}
+			
+			if (isset($searchModel['innerRelation'])) {
+				self::deepSearch($query, $splitSearch, $searchModel['innerRelation']);
+			} else {
+				return $query;
 			}
 		}
     }
