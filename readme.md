@@ -14,7 +14,7 @@ Yup, that makes sense. If you want to find a post given that string in any part 
 
 Require the package in your composer.json and update composer to download the package
 
-	composer require flyingapesinc/deepsearch
+    composer require flyingapesinc/deepsearch
 
 After that, add the ServiceProvider to the providers array in config/app.php
 
