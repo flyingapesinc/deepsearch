@@ -1,24 +1,24 @@
 {
-	"name": "flyingapesinc/deepsearch",
-	"description": "Advanced model and relationships search for Laravel",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Henry Alvarez",
-			"email": "lhumanizado@gmail.com"
-		},
-		{
-			"name": "Rubén González",
-			"email": "rubenx_360@hotmail.com"
-		}
-	],
-	"minimum-stability": "stable",
-	"require": {
-		"laravel/framework": ">=4.2"
-	},
-	"autoload": {
-		"psr-4": {
-			"FlyingApesInc\\DeepSearch\\": "src"
-		}
-	}
+    "name": "flyingapesinc/deepsearch",
+    "description": "Advanced model and relationships search for Laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Henry Alvarez",
+            "email": "lhumanizado@gmail.com"
+        },
+        {
+            "name": "Rubén González",
+            "email": "rubenx_360@hotmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "laravel/framework": ">=4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "FlyingApesInc\\DeepSearch\\": "src"
+        }
+    }
 }
