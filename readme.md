@@ -30,7 +30,38 @@ if you want to, add the facade for convenience
 
 ## How to Use
 
-DeepSearch::find() will bring back your search results. It takes 3 arguments:
+### Using the trait
+
+Use the trait in your model 
+
+```php
+use FlyingApesInc\DeepSearch\Traits\DeepSearchable;
+
+class Model extends Eloquent {
+
+    use DeepSearchable;
+
+    ...
+}
+```
+
+The deepSearch() method will bring back your search results. It takes 3 arguments:
+
+* __$search__ the search string to find
+* __$fields__ an array with the fields of the model you want to search in
+* __$relationFields__ an associative array with the relations of the main model and their fields you want to search in
+
+```php
+    $posts = Post::deepSearch($userInput, ['title'], [
+        'comments' => ['comment'],
+        'comments.user' => ['name']
+    ])->get();
+];
+```
+
+### Using the static class
+
+Alternatively you can use the static class DeepSearch::find(). It takes 3 arguments:
 
 * __$search__ the search string to find
 * __$model__ the model from which you want to return the records. ex: 'App\Post'
@@ -52,10 +83,12 @@ $searchModels = [
 ];
 ```
 
-The find() method returns a query, so you need to bring the results by yourself using get() or paginate(n). Following the example above we get:
+### Chaining
+
+The deepSearch() and find() methods return a query, so you need to bring the results by yourself using get() or paginate(n) and even chaining other methods. Following the example above we get:
 
 ```php
-$search = DeepSearch::find($userInput, 'App\Post', $searchModels)->get();
+$search = DeepSearch::find($userInput, 'App\Post', $searchModels)->where('active', 1)->paginate(10);
 ```
 
 ## Authors
