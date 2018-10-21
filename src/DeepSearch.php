@@ -9,36 +9,25 @@ namespace FlyingApesInc\DeepSearch;
  * @author Flying Apes Inc.
  */
 class DeepSearch
-{
-    public function __construct()
-    {
-
-    }
-
+{   
     /**
      * Main process
      *
      * @param string $search
-     * @param Illuminate\Database\Eloquent\Model $model
-     * @param array $searchModels
+     * @param Illuminate\Database\Eloquent\Builder $builder
+     * @param array $searchSchema
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public static function find($search, $model, $searchModels)
+    public static function find($search, $builder, $searchSchema)
     {
         // Remove special characters and split the search
         $cleanSearch = preg_replace('/[^ \w]+/', ' ', $search);
         $cleanSearch = str_replace('  ', ' ', $cleanSearch);
-          $splitSearch = explode(' ', $cleanSearch);
+        $splitSearch = explode(' ', $cleanSearch);
 
-        if (count($splitSearch) == 0) {
-            return $model::select('*');
-        }
-
-        $searchModels = [$searchModels];
-
-        $results = $model::where(function($query) use ($splitSearch, $searchModels) {
+        $results = $builder->where(function($query) use ($splitSearch, $searchSchema) {
             // Deep search every word in every field
-            self::deepSearch($query, $splitSearch, $searchModels);
+            self::deepSearch($query, $splitSearch, [$searchSchema]);
         });
 
         return $results;
@@ -46,29 +35,29 @@ class DeepSearch
 
     private static function deepSearch($query, $splitSearch, $currentLevel)
     {
-        foreach ($currentLevel as $searchModel) {
-            foreach ($searchModel['searchFields'] as $searchField) {
+        foreach ($currentLevel as $model) {
+            foreach ($model['fields'] as $field) {
 
-                if (!isset($searchModel['relationship'])) {
+                if (!isset($model['relationship'])) {
                     foreach ($splitSearch as $word) {
                         if (!$query) {
-                            $query->where($searchField, 'like', '%' . $word . '%');
+                            $query->where($field, 'like', '%' . $word . '%');
                         } else {
-                            $query->orWhere($searchField, 'like', '%' . $word . '%');
+                            $query->orWhere($field, 'like', '%' . $word . '%');
                         }
                     }
                 } else {
-                    $query->orWhereHas($searchModel['relationship'], function($relQuery) use ($splitSearch, $searchField) {
+                    $query->orWhereHas($model['relationship'], function($relQuery) use ($splitSearch, $field) {
                         foreach ($splitSearch as $word) {
-                            $relQuery->where($searchField, 'like', '%' . $word . '%');
+                            $relQuery->where($field, 'like', '%' . $word . '%');
                         }
                     });
                 }
 
             }
             
-            if (isset($searchModel['relations'])) {
-                self::deepSearch($query, $splitSearch, $searchModel['relations']);
+            if (isset($model['relationships'])) {
+                self::deepSearch($query, $splitSearch, $model['relationships']);
             }
         }
         return $query;

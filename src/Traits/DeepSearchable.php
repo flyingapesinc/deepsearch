@@ -6,21 +6,21 @@ use FlyingApesInc\DeepSearch\DeepSearch;
 
 trait DeepSearchable {
 
-    public function deepSearch($search, array $fields, array $relationFields = [])
+    public function scopeDeepSearch($query, $search, array $fields, array $relationFields = [])
     {
-        $searchModels = [
-            'searchFields' => $fields,
-            'relations' => []
+        $searchSchema = [
+            'fields' => $fields,
+            'relationships' => []
         ];
 
         foreach ($relationFields as $relation => $fields) {
-            array_push($searchModels['relations'], [
+            $searchSchema['relationships'][] = [
                 'relationship' => $relation,
-                'searchFields' => $fields,
-            ]);
+                'fields' => !is_array($fields) ? [$fields] : $fields,
+            ];
         }
 
-        return DeepSearch::find($search, self::class, $searchModels);
+        return DeepSearch::find($search, $query, $searchSchema);
     }
 
 }
