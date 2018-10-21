@@ -54,10 +54,7 @@ The deepSearch() method will bring back your search results. It takes 3 argument
 ```php
 $posts = Post::deepSearch($userInput, ['title'], [
     'comments' => 'comment',
-    'comments.user' => [
-        'name',
-        'lastname'
-    ]
+    'comments.user' => ['name', 'lastname']
 ])->get();
 ```
 
@@ -79,10 +76,7 @@ $searchSchema = [
         ],
         [
             'relationship' => 'comments.user', // Use dot notation for inner relations
-            'fields' => [
-                'name',
-                'lastname'
-            ],
+            'fields' => ['name', 'lastname'],
         ]
     ]
 ];
