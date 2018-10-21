@@ -52,11 +52,13 @@ The deepSearch() method will bring back your search results. It takes 3 argument
 * __$relationFields__ an associative array with the relations of the main model and their fields you want to search in
 
 ```php
-    $posts = Post::deepSearch($userInput, ['title'], [
-        'comments' => ['comment'],
-        'comments.user' => ['name']
-    ])->get();
-];
+$posts = Post::deepSearch($userInput, ['title'], [
+    'comments' => 'comment',
+    'comments.user' => [
+        'name',
+        'lastname'
+    ]
+])->get();
 ```
 
 ### Using the static class
@@ -65,19 +67,22 @@ Alternatively you can use the static class DeepSearch::find(). It takes 3 argume
 
 * __$search__ the search string to find
 * __$model__ the model from which you want to return the records. ex: 'App\Post'
-* __$searchModels__ an array with the relations of the main model you want to search in, as well as what fields. The format is as follows:
+* __$searchSchema__ an array with the relations of the main model you want to search in, as well as what fields. The format is as follows:
 
 ```php
-$searchModels = [
-    'searchFields' => ['title'], // Fields where you want to search in the main model
-    'relations' => [ // Relationships, if any
+$searchSchema = [
+    'fields' => ['title'], // Fields where you want to search in the main model
+    'relationships' => [ // Relationships, if any
         [
             'relationship' => 'comments', // Here you put name of the relationship
-            'searchFields' => ['comment'], // And here the fields where you want to search in the related table
+            'fields' => 'comment', // And here the fields where you want to search in the related table
         ],
         [
             'relationship' => 'comments.user', // Use dot notation for inner relations
-            'searchFields' => ['name'],
+            'fields' => [
+                'name',
+                'lastname'
+            ],
         ]
     ]
 ];
@@ -88,7 +93,7 @@ $searchModels = [
 The deepSearch() and find() methods return a query, so you need to bring the results by yourself using get() or paginate(n) and even chaining other methods. Following the example above we get:
 
 ```php
-$search = DeepSearch::find($userInput, 'App\Post', $searchModels)->where('active', 1)->paginate(10);
+$search = DeepSearch::find($userInput, App\Post::query(), $searchSchema)->where('active', 1)->paginate(10);
 ```
 
 ## Authors
